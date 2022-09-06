@@ -20,7 +20,7 @@ def count_clicks(token, bitlink):
     summary_url = f'https://api-ssl.bitly.com/v4/bitlinks/bit.ly/{bitlink}/clicks/summary'
     response = requests.get(summary_url, headers={'Authorization': token})
     response.raise_for_status()
-    return response.json()
+    return response.json()['total_clicks']
 
 
 def is_bitlink(url):
@@ -39,7 +39,7 @@ def main():
             print('Битлинк: ', bitlink)
         else:
             clicks_count = count_clicks(BITLY_BEARER_TOKEN, args.link)
-            print('Всего кликов: ', clicks_count['total_clicks'])
+            print('Всего кликов: ', clicks_count)
     except requests.exceptions.HTTPError as error:
         print(f'Enter correct link\n {error}')
         sys.exit()
