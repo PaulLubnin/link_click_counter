@@ -7,13 +7,6 @@ import requests
 from settings import BITLY_BEARER_TOKEN
 
 
-def get_profile(token):
-    user_url = 'https://api-ssl.bitly.com/v4/user'
-    response = requests.get(user_url, headers={'Authorization': token})
-    response.raise_for_status()
-    return response.json()
-
-
 def get_shorten_link(token, link):
     bitlinks_url = 'https://api-ssl.bitly.com/v4/bitlinks'
     data = {'long_url': link}
