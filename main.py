@@ -18,8 +18,7 @@ def get_shorten_link(token, link):
 def count_clicks(token, bitlink):
     bitlink = urlparse(bitlink).path[1:]
     summary_url = f'https://api-ssl.bitly.com/v4/bitlinks/bit.ly/{bitlink}/clicks/summary'
-    payload = {'unit': 'day', 'units': -1}
-    response = requests.get(summary_url, headers={'Authorization': token}, params=payload)
+    response = requests.get(summary_url, headers={'Authorization': token})
     response.raise_for_status()
     return response.json()
 
@@ -34,21 +33,16 @@ def main():
     parser.add_argument('link', type=str, help='Enter the link you want to shorten')
     args = parser.parse_args()
 
-    if not is_bitlink(args.link):
-        try:
+    try:
+        if not is_bitlink(args.link):
             bitlink = get_shorten_link(BITLY_BEARER_TOKEN, args.link)
-        except requests.exceptions.HTTPError as error:
-            print(f'Enter correct link\n {error}')
-            sys.exit()
-        print('Битлинк: ', bitlink)
-
-    else:
-        try:
+            print('Битлинк: ', bitlink)
+        else:
             clicks_count = count_clicks(BITLY_BEARER_TOKEN, args.link)
-        except requests.exceptions.HTTPError as error:
-            print(f'Enter correct bitlink\n {error}')
-            sys.exit()
-        print('Всего кликов: ', clicks_count['total_clicks'])
+            print('Всего кликов: ', clicks_count['total_clicks'])
+    except requests.exceptions.HTTPError as error:
+        print(f'Enter correct link\n {error}')
+        sys.exit()
 
 
 if __name__ == "__main__":
