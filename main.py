@@ -9,8 +9,8 @@ from settings import BITLY_BEARER_TOKEN
 
 def get_shorten_link(token, link):
     bitlinks_url = 'https://api-ssl.bitly.com/v4/bitlinks'
-    data = {'long_url': link}
-    response = requests.post(bitlinks_url, headers={'Authorization': token}, json=data)
+    long_link = {'long_url': link}
+    response = requests.post(bitlinks_url, headers={'Authorization': token}, json=long_link)
     response.raise_for_status()
     return response.json()['link']
 
