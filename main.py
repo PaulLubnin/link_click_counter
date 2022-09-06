@@ -3,12 +3,13 @@ import sys
 from urllib.parse import urlparse
 
 import requests
-from dotenv import dotenv_values
+
+from settings import BITLY_BEARER_TOKEN
 
 
 def get_profile(token):
     user_url = 'https://api-ssl.bitly.com/v4/user'
-    response = requests.get(user_url, headers=token)
+    response = requests.get(user_url, headers={'Authorization': token})
     response.raise_for_status()
     return response.json()
 
@@ -16,7 +17,7 @@ def get_profile(token):
 def get_shorten_link(token, link):
     bitlinks_url = 'https://api-ssl.bitly.com/v4/bitlinks'
     data = {'long_url': link}
-    response = requests.post(bitlinks_url, headers=token, json=data)
+    response = requests.post(bitlinks_url, headers={'Authorization': token}, json=data)
     response.raise_for_status()
     return response.json()['link']
 
@@ -25,7 +26,7 @@ def count_clicks(token, bitlink):
     bitlink = urlparse(bitlink).path[1:]
     summary_url = f'https://api-ssl.bitly.com/v4/bitlinks/bit.ly/{bitlink}/clicks/summary'
     payload = {'unit': 'day', 'units': -1}
-    response = requests.get(summary_url, headers=token, params=payload)
+    response = requests.get(summary_url, headers={'Authorization': token}, params=payload)
     response.raise_for_status()
     return response.json()
 
@@ -40,11 +41,9 @@ def main():
     parser.add_argument('link', type=str, help='Enter the link you want to shorten')
     args = parser.parse_args()
 
-    token = dotenv_values('.env')
-
     if not is_bitlink(args.link):
         try:
-            bitlink = get_shorten_link(token, args.link)
+            bitlink = get_shorten_link(BITLY_BEARER_TOKEN, args.link)
         except requests.exceptions.HTTPError as error:
             print(f'Enter correct link\n {error}')
             sys.exit()
@@ -52,7 +51,7 @@ def main():
 
     else:
         try:
-            clicks_count = count_clicks(token, args.link)
+            clicks_count = count_clicks(BITLY_BEARER_TOKEN, args.link)
         except requests.exceptions.HTTPError as error:
             print(f'Enter correct bitlink\n {error}')
             sys.exit()
