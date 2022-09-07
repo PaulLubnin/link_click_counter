@@ -17,7 +17,8 @@ def shorten_link(token, link):
 
 def count_clicks(token, bitlink):
     bitlink = urlparse(bitlink)
-    api_url = f'https://api-ssl.bitly.com/v4/bitlinks/{bitlink.netloc + bitlink.path}/clicks/summary'
+    url_segment = bitlink.netloc + bitlink.path
+    api_url = f'https://api-ssl.bitly.com/v4/bitlinks/{url_segment}/clicks/summary'
     response = requests.get(api_url, headers={'Authorization': f'Bearer {token}'})
     response.raise_for_status()
     return response.json()['total_clicks']
@@ -26,7 +27,8 @@ def count_clicks(token, bitlink):
 def is_bitlink(token, link):
     shorted_link = False
     parsed = urlparse(link)
-    api_url = f'https://api-ssl.bitly.com/v4/bitlinks/{parsed.netloc + parsed.path}'
+    url_segment = parsed.netloc + parsed.path
+    api_url = f'https://api-ssl.bitly.com/v4/bitlinks/{url_segment}'
     response = requests.get(api_url, headers={'Authorization': f'Bearer {token}'})
     if response.ok:
         shorted_link = True
