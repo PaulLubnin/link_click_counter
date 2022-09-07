@@ -7,13 +7,6 @@ import requests
 from dotenv import load_dotenv
 
 
-try:
-    BITLY_BEARER_TOKEN = os.environ['BITLY_BEARER_TOKEN']
-except KeyError as error:
-    print('Missing authorization token')
-    sys.exit()
-
-
 def get_shorten_link(token, link):
     api_url = 'https://api-ssl.bitly.com/v4/bitlinks'
     long_link = {'long_url': link}
@@ -45,12 +38,14 @@ def main():
     parser.add_argument('link', type=str, help='Enter the link you want to shorten')
     args = parser.parse_args()
 
+    bitly_bearer_token = os.environ['BITLY_BEARER_TOKEN']
+
     try:
-        if not is_bitlink(BITLY_BEARER_TOKEN, args.link):
-            bitlink = get_shorten_link(BITLY_BEARER_TOKEN, args.link)
+        if not is_bitlink(bitly_bearer_token, args.link):
+            bitlink = get_shorten_link(bitly_bearer_token, args.link)
             print('Битлинк: ', bitlink)
         else:
-            clicks_count = count_clicks(BITLY_BEARER_TOKEN, args.link)
+            clicks_count = count_clicks(bitly_bearer_token, args.link)
             print('Всего кликов: ', clicks_count)
     except requests.exceptions.HTTPError as error:
         print(f'Enter correct link\n {error}')
