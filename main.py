@@ -6,7 +6,6 @@ from urllib.parse import urlparse
 import requests
 from dotenv import load_dotenv
 
-load_dotenv()
 
 try:
     BITLY_BEARER_TOKEN = os.environ['BITLY_BEARER_TOKEN']
@@ -59,4 +58,5 @@ def main():
 
 
 if __name__ == "__main__":
+    load_dotenv()
     main()
