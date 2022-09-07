@@ -18,7 +18,7 @@ except KeyError as error:
 def get_shorten_link(token, link):
     bitlinks_url = 'https://api-ssl.bitly.com/v4/bitlinks'
     long_link = {'long_url': link}
-    response = requests.post(bitlinks_url, headers={'Authorization': token}, json=long_link)
+    response = requests.post(bitlinks_url, headers={'Authorization': f'Bearer {token}'}, json=long_link)
     response.raise_for_status()
     return response.json()['link']
 
@@ -26,7 +26,7 @@ def get_shorten_link(token, link):
 def count_clicks(token, bitlink):
     bitlink = urlparse(bitlink).path[1:]
     summary_url = f'https://api-ssl.bitly.com/v4/bitlinks/bit.ly/{bitlink}/clicks/summary'
-    response = requests.get(summary_url, headers={'Authorization': token})
+    response = requests.get(summary_url, headers={'Authorization': f'Bearer {token}'})
     response.raise_for_status()
     return response.json()['total_clicks']
 
