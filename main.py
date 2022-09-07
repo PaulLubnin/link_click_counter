@@ -7,7 +7,7 @@ import requests
 from dotenv import load_dotenv
 
 
-def get_shorten_link(token, link):
+def shorten_link(token, link):
     api_url = 'https://api-ssl.bitly.com/v4/bitlinks'
     long_link = {'long_url': link}
     response = requests.post(api_url, headers={'Authorization': f'Bearer {token}'}, json=long_link)
@@ -42,7 +42,7 @@ def main():
 
     try:
         if not is_bitlink(bitly_bearer_token, args.link):
-            bitlink = get_shorten_link(bitly_bearer_token, args.link)
+            bitlink = shorten_link(bitly_bearer_token, args.link)
             print('Битлинк: ', bitlink)
         else:
             clicks_count = count_clicks(bitly_bearer_token, args.link)
