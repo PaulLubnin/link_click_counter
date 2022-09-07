@@ -16,24 +16,29 @@ except KeyError as error:
 
 
 def get_shorten_link(token, link):
-    bitlinks_url = 'https://api-ssl.bitly.com/v4/bitlinks'
+    api_url = 'https://api-ssl.bitly.com/v4/bitlinks'
     long_link = {'long_url': link}
-    response = requests.post(bitlinks_url, headers={'Authorization': f'Bearer {token}'}, json=long_link)
+    response = requests.post(api_url, headers={'Authorization': f'Bearer {token}'}, json=long_link)
     response.raise_for_status()
     return response.json()['link']
 
 
 def count_clicks(token, bitlink):
-    bitlink = urlparse(bitlink).path[1:]
-    summary_url = f'https://api-ssl.bitly.com/v4/bitlinks/bit.ly/{bitlink}/clicks/summary'
-    response = requests.get(summary_url, headers={'Authorization': f'Bearer {token}'})
+    bitlink = urlparse(bitlink)
+    api_url = f'https://api-ssl.bitly.com/v4/bitlinks/{bitlink.netloc + bitlink.path}/clicks/summary'
+    response = requests.get(api_url, headers={'Authorization': f'Bearer {token}'})
     response.raise_for_status()
     return response.json()['total_clicks']
 
 
-def is_bitlink(url):
-    parsed = urlparse(url)
-    return parsed.netloc == 'bit.ly'
+def is_bitlink(token, link):
+    shorted_link = True
+    parsed = urlparse(link)
+    api_url = f'https://api-ssl.bitly.com/v4/bitlinks/{parsed.netloc + parsed.path}'
+    response = requests.get(api_url, headers={'Authorization': f'Bearer {token}'})
+    if response.status_code != 200:
+        shorted_link = False
+    return shorted_link
 
 
 def main():
@@ -42,7 +47,7 @@ def main():
     args = parser.parse_args()
 
     try:
-        if not is_bitlink(args.link):
+        if not is_bitlink(BITLY_BEARER_TOKEN, args.link):
             bitlink = get_shorten_link(BITLY_BEARER_TOKEN, args.link)
             print('Битлинк: ', bitlink)
         else:
