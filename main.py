@@ -1,10 +1,18 @@
 import argparse
+import os
 import sys
 from urllib.parse import urlparse
 
 import requests
+from dotenv import load_dotenv
 
-from settings import BITLY_BEARER_TOKEN
+load_dotenv()
+
+try:
+    BITLY_BEARER_TOKEN = os.environ['BITLY_BEARER_TOKEN']
+except KeyError as error:
+    print('Missing authorization token')
+    sys.exit()
 
 
 def get_shorten_link(token, link):
