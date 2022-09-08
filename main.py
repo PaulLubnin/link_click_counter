@@ -25,14 +25,11 @@ def count_clicks(token, bitlink):
 
 
 def is_bitlink(token, link):
-    shorted_link = False
     parsed = urlparse(link)
     url_segment = parsed.netloc + parsed.path
     api_url = f'https://api-ssl.bitly.com/v4/bitlinks/{url_segment}'
     response = requests.get(api_url, headers={'Authorization': f'Bearer {token}'})
-    if response.ok:
-        shorted_link = True
-    return shorted_link
+    return response.ok
 
 
 def main():
